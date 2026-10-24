@@ -1,0 +1,16 @@
+*.mp4
+*.webm
+*.zip
+*.log
+*.before-fix
+masters/
+previews/
+backups/
+profile/
+node_modules/
+watcher.json
+monitor.json
+shortcuts.json
+*-stop.request
+.DS_Store
+Thumbs.db

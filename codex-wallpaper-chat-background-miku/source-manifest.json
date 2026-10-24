@@ -1,0 +1,146 @@
+{
+  "version": "1.0.0",
+  "mediaIncluded": false,
+  "files": [
+    {
+      "file": ".gitignore",
+      "bytes": 165,
+      "sha256": "a5d705e1c012c61e737c1bb412644f4550988e684f08506463b4a3bed4af5e05"
+    },
+    {
+      "file": "CHANGELOG.md",
+      "bytes": 813,
+      "sha256": "da0cdd57d3b817025ba001de0e414c0d7fac194f8b5040ab60bfee9f0c3faa2c"
+    },
+    {
+      "file": "LICENSE",
+      "bytes": 1065,
+      "sha256": "22d6246517466a90b9ac7dd14ad6b4220a8adb35f7eeae6bde512a128c3300d0"
+    },
+    {
+      "file": "README.md",
+      "bytes": 3214,
+      "sha256": "8bf2f82e86e52266a580e5f8449075098d1174f397d13bf70753417585cac646"
+    },
+    {
+      "file": "THIRD_PARTY_NOTICES.md",
+      "bytes": 1074,
+      "sha256": "f277a9eacdc9456750f9fe2f912adf2989338afd5914adad5a07789e8799943d"
+    },
+    {
+      "file": "VERSION",
+      "bytes": 7,
+      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+    },
+    {
+      "file": "follow-codex.ps1",
+      "bytes": 7381,
+      "sha256": "318cdc96eb95740eb9b462c8b4b74b219d0142065d72f8852545b9b954bd5349"
+    },
+    {
+      "file": "install-autostart.ps1",
+      "bytes": 5884,
+      "sha256": "4cde5aeeb31be91c4ed817692d94da47401887242605d1f1d8dfa5807f95ede7"
+    },
+    {
+      "file": "install.cmd",
+      "bytes": 275,
+      "sha256": "947515eb693566bb15da597774a589d5b21f7e217b1e32bdb8eba62e7721aa89"
+    },
+    {
+      "file": "install.ps1",
+      "bytes": 1284,
+      "sha256": "f2dca8b5f86aae0c9ae8861efcf0d06eef0a0c694125e77690df1e604debf631"
+    },
+    {
+      "file": "pause.ps1",
+      "bytes": 348,
+      "sha256": "75e2f76eeee449ad148b7550fb8f6b5ee7031975553751b785d775b8e8aba501"
+    },
+    {
+      "file": "renderer.js",
+      "bytes": 18672,
+      "sha256": "02b6ae93446064120060479a26a0dcc5d1bda7cc9fc902917ec8ba053895c1c8"
+    },
+    {
+      "file": "resume.ps1",
+      "bytes": 349,
+      "sha256": "e333040dd464b1a28979874bb7d0aca4f921a5d45c82faeb1fe3579371d7e9c4"
+    },
+    {
+      "file": "settings.json",
+      "bytes": 116,
+      "sha256": "7fa935b28056b90b78b64ed2960b0808443483ffd5498de151e8dcdf99da76f1"
+    },
+    {
+      "file": "start.ps1",
+      "bytes": 7179,
+      "sha256": "f8419ab4bda37cb269496a04f30e3e00936fe20b6135c2b0df475efcd1764608"
+    },
+    {
+      "file": "stop.ps1",
+      "bytes": 3581,
+      "sha256": "39f2b3f4132900d9104cfb5eaa459ec909656cf8709589c76b22dbf7281fa506"
+    },
+    {
+      "file": "tests/test-wallpaper-connection.ps1",
+      "bytes": 15062,
+      "sha256": "aaaddfbe62f0e41a4a93b59a1225478faf62066d9041795119bb4895c22ad8e8"
+    },
+    {
+      "file": "tests/test-wallpaper-startup.ps1",
+      "bytes": 10687,
+      "sha256": "a6fcfc59b41b254fb8d009a4fea0532cd0525daf99cef2d84b3318c3b9b89ca0"
+    },
+    {
+      "file": "tests/test-watch-stop.mjs",
+      "bytes": 1732,
+      "sha256": "ce225a341b5cd3e9f86c4acc3bcde2078d42144f90f966374b4e2461341915a7"
+    },
+    {
+      "file": "uninstall-autostart.ps1",
+      "bytes": 1795,
+      "sha256": "c9a32f097d45a1eb93f83ee2045df63f4b27629cd7ae2d7ea441c212a42d29c5"
+    },
+    {
+      "file": "verify-cdp.ps1",
+      "bytes": 240,
+      "sha256": "5591f92823c4a8754d1434b8c44e90a8ab6745a967685b54a0b55b20bc3203ca"
+    },
+    {
+      "file": "wallpaper.mjs",
+      "bytes": 10659,
+      "sha256": "c7387eab46059a020caa88962534f1047158519d972bbd6c68cda8f0702ef9b6"
+    },
+    {
+      "file": "wallpapers/.gitkeep",
+      "bytes": 1,
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    },
+    {
+      "file": "wallpaper美化包安装须知.txt",
+      "bytes": 15850,
+      "sha256": "a98ad77d508bad751330a3a5e72debc6b26c14794ffaeec0e622c7f2264fa8f2"
+    },
+    {
+      "file": "watcher-start.ps1",
+      "bytes": 5260,
+      "sha256": "b9077dacb344a17f49a4148e7f4fb7e4ffdbb5a7327a42e007ae1b00a42f279c"
+    },
+    {
+      "file": "windows-process.ps1",
+      "bytes": 8074,
+      "sha256": "1cbe0ed6a0af84913491349819082c895307e9af971ce22352bcfe80bf3415a2"
+    },
+    {
+      "file": "启动壁纸.cmd",
+      "bytes": 119,
+      "sha256": "15d7cc3aebfe92296422ec7e0435e54b114b4c51b679ac67e6eb7703a215a2b1"
+    },
+    {
+      "file": "恢复原貌.cmd",
+      "bytes": 102,
+      "sha256": "fdda199fd183206048089a851106031e1201f191feaa600e998fc0daf8742173"
+    }
+  ]
+}
