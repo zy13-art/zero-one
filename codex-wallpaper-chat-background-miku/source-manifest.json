@@ -1,5 +1,5 @@
 {
-  "version": "1.0.1",
+  "version": "1.0.2",
   "mediaIncluded": false,
   "files": [
     {
@@ -9,8 +9,8 @@
     },
     {
       "file": "CHANGELOG.md",
-      "bytes": 1409,
-      "sha256": "d6c7d94a5239d65cfa79d8ee39e5ae46f646a05508536df9854ab0bef05e2545"
+      "bytes": 1813,
+      "sha256": "37894999aaa2991f43c140797d0ee4f68048fa965eb051d926667339e6726429"
     },
     {
       "file": "LICENSE",
@@ -19,8 +19,8 @@
     },
     {
       "file": "README.md",
-      "bytes": 3327,
-      "sha256": "ca6947a89490a4b1376c6fed90a5a81bb786ff0841f900a6220098b16c11d6aa"
+      "bytes": 3367,
+      "sha256": "0c18f318f9a07b4e03924279095605fbbc171ed6a904c645fe60434218da1e51"
     },
     {
       "file": "THIRD_PARTY_NOTICES.md",
@@ -30,12 +30,12 @@
     {
       "file": "VERSION",
       "bytes": 7,
-      "sha256": "f34306bb50e2d2ec59c788b9013c5ac682ef7f7f69345a3e957e38c0b6ba2fdd"
+      "sha256": "0dc8489f55b24f8c7f12619f9e5e25a3eab2ce5cce7e057413d9c27c26b7d675"
     },
     {
       "file": "follow-codex.ps1",
-      "bytes": 9453,
-      "sha256": "f6180cac1b4dfb03333157ee2f73580db4cb4ffcf8d4e2ccb93d686555f6db49"
+      "bytes": 11264,
+      "sha256": "591a8e60c38f8b1abd236946fae02acfa8b31b245dce7a1f6cfa76ca84bece2a"
     },
     {
       "file": "install-autostart.ps1",
@@ -93,6 +93,11 @@
       "sha256": "470358152492fff85b52b9d7e7b1d8574879d0eabb14b16dd5f7ef1a6adaddb2"
     },
     {
+      "file": "tests/test-startup-session-change.ps1",
+      "bytes": 3575,
+      "sha256": "af8a6fb95a7d115f4fb9c5e73add1591ab761ea3958b89ef969c8ee61984ea3d"
+    },
+    {
       "file": "tests/test-wallpaper-connection.ps1",
       "bytes": 15166,
       "sha256": "6c0cdc00a9e0443befb42dcc9dedd52ae83a4693117500bfc3bedf330c971bbd"
@@ -129,8 +134,8 @@
     },
     {
       "file": "wallpaper美化包安装须知.txt",
-      "bytes": 16664,
-      "sha256": "7d040c64cbe5101524e1a07355f4b1e4c5e21e7d11aa37d20a60e66e6af7ad35"
+      "bytes": 17249,
+      "sha256": "17eb4a754923c04687694776a7b47487afa6b7868f0ea9985e1f47c5929bcd0a"
     },
     {
       "file": "watcher-start.ps1",

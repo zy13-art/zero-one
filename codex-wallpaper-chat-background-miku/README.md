@@ -64,6 +64,7 @@ node tests/test-watch-stop.mjs
 .\tests\test-wallpaper-startup.ps1
 .\tests\test-wallpaper-connection.ps1
 .\tests\test-startup-child-race.ps1
+.\tests\test-startup-session-change.ps1
 ```
 
 ## 许可

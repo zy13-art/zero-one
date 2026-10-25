@@ -2,9 +2,16 @@
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'windows-process.ps1')
 
+function Get-CodexSessionRecords {
+  param([object[]]$Records = @())
+  $main = @($Records | Where-Object { $_.Arguments -and -not @($_.Arguments | Where-Object { $_ -match '^--type(?:=|$)' }).Count })
+  if ($main.Count) { return $main }
+  @($Records)
+}
+
 function New-CodexFollowState {
   param([object[]]$InitialRecords = @())
-  @{ Mode = $(if (@($InitialRecords).Count) { 'baseline' } else { 'armed' }); Candidate = $null; ProbeAt = [datetime]::MinValue; RelayUntil = [datetime]::MinValue }
+  @{ Mode = $(if (@($InitialRecords).Count) { 'baseline' } else { 'armed' }); Candidate = $null; ProbeAt = [datetime]::MinValue; RelayUntil = [datetime]::MinValue; SessionRecords = @(Get-CodexSessionRecords -Records $InitialRecords) }
 }
 
 function Test-CodexSameIdentity {
@@ -24,27 +31,55 @@ function Test-CodexRelayBatch {
   return $true
 }
 
+function Test-CodexOldChildOverlap {
+  param($Candidate, [object[]]$Records, [datetime]$Now)
+  if (-not $Candidate) { return $false }
+  $older = @($Records | Where-Object { $_.StartedTicks -lt $Candidate.StartedTicks })
+  if (-not $older.Count) { return $false }
+  foreach ($item in $older) {
+    if (-not $item.Arguments -or -not @($item.Arguments | Where-Object { $_ -match '^--type(?:=|$)' }).Count) { return $false }
+  }
+  $fresh = @($Records | Where-Object { $_.StartedTicks -ge $Candidate.StartedTicks })
+  Test-CodexRelayBatch -Candidate $Candidate -Records $fresh -Now $Now
+}
+
 function Get-CodexFollowDecision {
   param([hashtable]$State, [object[]]$Records = @(), [bool]$CdpReady = $false, [datetime]$Now = [datetime]::UtcNow)
   $nowUtc = $Now.ToUniversalTime()
   if (-not @($Records).Count) {
     if ($State.Mode -eq 'relayed' -and $nowUtc -lt $State.RelayUntil) { return 'wait' }
-    $State.Mode = 'armed'; $State.Candidate = $null
+    $State.Mode = 'armed'; $State.Candidate = $null; $State.SessionRecords = @()
     return 'wait'
   }
-  if ($CdpReady) { $State.Mode = 'active'; return 'wait' }
+  if ($State.Mode -in @('baseline','active','blocked') -and @($State.SessionRecords).Count) {
+    $sameSession = $false
+    foreach ($previous in @($State.SessionRecords)) {
+      if (@($Records | Where-Object { Test-CodexSameIdentity $_ $previous }).Count) { $sameSession = $true; break }
+    }
+    if (-not $sameSession) {
+      $State.Mode = 'armed'; $State.Candidate = $null; $State.SessionRecords = @()
+    }
+  }
+  if ($CdpReady) { $State.Mode = 'active'; $State.SessionRecords = @(Get-CodexSessionRecords -Records $Records); return 'wait' }
   if ($State.Mode -in @('baseline','active','blocked')) { return 'wait' }
-  if ($State.Mode -eq 'relayed') { $State.Mode = 'active'; return 'wait' }
+  if ($State.Mode -eq 'relayed') { $State.Mode = 'active'; $State.SessionRecords = @(Get-CodexSessionRecords -Records $Records); return 'wait' }
   if ($State.Mode -eq 'armed') {
+    $State.SessionRecords = @(Get-CodexSessionRecords -Records $Records)
     $main = @($Records | Where-Object { $_.Arguments -and -not @($_.Arguments | Where-Object { $_ -match '^--type(?:=|$)' }).Count } | Sort-Object StartedTicks | Select-Object -First 1)
     if (-not $main.Count) { $State.Mode = 'blocked'; return 'skip-arguments' }
     $candidate = $main[0]
-    if (-not (Test-CodexRelayBatch -Candidate $candidate -Records $Records -Now $nowUtc)) { $State.Mode = 'blocked'; return 'skip-age-or-identity' }
+    if (-not (Test-CodexRelayBatch -Candidate $candidate -Records $Records -Now $nowUtc)) {
+      if (Test-CodexOldChildOverlap -Candidate $candidate -Records $Records -Now $nowUtc) { return 'wait' }
+      $State.Mode = 'blocked'; return 'skip-age-or-identity'
+    }
     $State.Candidate = $candidate; $State.ProbeAt = $nowUtc; $State.Mode = 'probing'
     return 'probe'
   }
   if ($State.Mode -eq 'probing') {
-    if (-not (Test-CodexRelayBatch -Candidate $State.Candidate -Records $Records -Now $nowUtc)) { $State.Mode = 'blocked'; return 'skip-age-or-identity' }
+    if (-not (Test-CodexRelayBatch -Candidate $State.Candidate -Records $Records -Now $nowUtc)) {
+      if (Test-CodexOldChildOverlap -Candidate $State.Candidate -Records $Records -Now $nowUtc) { return 'wait' }
+      $State.Mode = 'blocked'; return 'skip-age-or-identity'
+    }
     if (($nowUtc - $State.ProbeAt).TotalSeconds -lt 1.5) { return 'wait' }
     # Mark before any OS action: failure must never cause a restart loop.
     $State.Mode = 'relayed'; $State.RelayUntil = $nowUtc.AddSeconds(10)
