@@ -15,7 +15,8 @@ public static class CodexWallpaperWindowsProcess {
   [DllImport("shell32.dll", CharSet=CharSet.Unicode, SetLastError=true)] static extern IntPtr CommandLineToArgvW(string line, out int count);
   [DllImport("kernel32.dll")] static extern IntPtr LocalFree(IntPtr data);
   [StructLayout(LayoutKind.Sequential)] struct UnicodeString { public ushort Length; public ushort MaximumLength; public IntPtr Buffer; }
-  public sealed class Identity { public int Id; public int SessionId; public string Executable; public DateTime Started; public long StartedTicks; public string CommandLine; public string[] Arguments; }
+  [StructLayout(LayoutKind.Sequential)] struct BasicInformation { public IntPtr Reserved1; public IntPtr PebBaseAddress; public IntPtr Reserved2a; public IntPtr Reserved2b; public IntPtr UniqueProcessId; public IntPtr ParentProcessId; }
+  public sealed class Identity { public int Id; public int ParentId; public int SessionId; public string Executable; public DateTime Started; public long StartedTicks; public string CommandLine; public string[] Arguments; }
   public static string[] ParseArguments(string line) {
     int count; IntPtr argv=CommandLineToArgvW(line,out count);
     if(argv==IntPtr.Zero) return null;
@@ -31,6 +32,10 @@ public static class CodexWallpaperWindowsProcess {
       var result=new Identity { Id=id, Executable=path.ToString(), Started=DateTime.FromFileTimeUtc(created) };
       int session; if(!ProcessIdToSessionId(id,out session)) return null; result.SessionId=session;
       result.StartedTicks=result.Started.Ticks;
+      int basicLength=Marshal.SizeOf(typeof(BasicInformation)),basicReturned;
+      IntPtr basicBuffer=Marshal.AllocHGlobal(basicLength);
+      try { if(NtQueryInformationProcess(process,0,basicBuffer,basicLength,out basicReturned)>=0) { var basic=(BasicInformation)Marshal.PtrToStructure(basicBuffer,typeof(BasicInformation)); result.ParentId=checked((int)basic.ParentProcessId.ToInt64()); } }
+      finally { Marshal.FreeHGlobal(basicBuffer); }
       int needed; NtQueryInformationProcess(process,60,IntPtr.Zero,0,out needed);
       if(needed>0 && needed<1048576) {
         IntPtr buffer=Marshal.AllocHGlobal(needed);

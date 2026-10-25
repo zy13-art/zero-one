@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "mediaIncluded": false,
   "files": [
     {
@@ -9,8 +9,8 @@
     },
     {
       "file": "CHANGELOG.md",
-      "bytes": 813,
-      "sha256": "da0cdd57d3b817025ba001de0e414c0d7fac194f8b5040ab60bfee9f0c3faa2c"
+      "bytes": 1409,
+      "sha256": "d6c7d94a5239d65cfa79d8ee39e5ae46f646a05508536df9854ab0bef05e2545"
     },
     {
       "file": "LICENSE",
@@ -19,8 +19,8 @@
     },
     {
       "file": "README.md",
-      "bytes": 3214,
-      "sha256": "8bf2f82e86e52266a580e5f8449075098d1174f397d13bf70753417585cac646"
+      "bytes": 3327,
+      "sha256": "ca6947a89490a4b1376c6fed90a5a81bb786ff0841f900a6220098b16c11d6aa"
     },
     {
       "file": "THIRD_PARTY_NOTICES.md",
@@ -30,12 +30,12 @@
     {
       "file": "VERSION",
       "bytes": 7,
-      "sha256": "4ca8bbd3c595ee306226c6996b32b8d47a900217c55a7ed0cfc868ee444f34f1"
+      "sha256": "f34306bb50e2d2ec59c788b9013c5ac682ef7f7f69345a3e957e38c0b6ba2fdd"
     },
     {
       "file": "follow-codex.ps1",
-      "bytes": 7381,
-      "sha256": "318cdc96eb95740eb9b462c8b4b74b219d0142065d72f8852545b9b954bd5349"
+      "bytes": 9453,
+      "sha256": "f6180cac1b4dfb03333157ee2f73580db4cb4ffcf8d4e2ccb93d686555f6db49"
     },
     {
       "file": "install-autostart.ps1",
@@ -83,9 +83,19 @@
       "sha256": "39f2b3f4132900d9104cfb5eaa459ec909656cf8709589c76b22dbf7281fa506"
     },
     {
+      "file": "tests/test-appearance-compatibility.mjs",
+      "bytes": 2222,
+      "sha256": "a566b944c4097f692ff7b415850ffef37d5c00b639575243661a6aea7eb4414b"
+    },
+    {
+      "file": "tests/test-startup-child-race.ps1",
+      "bytes": 3779,
+      "sha256": "470358152492fff85b52b9d7e7b1d8574879d0eabb14b16dd5f7ef1a6adaddb2"
+    },
+    {
       "file": "tests/test-wallpaper-connection.ps1",
-      "bytes": 15062,
-      "sha256": "aaaddfbe62f0e41a4a93b59a1225478faf62066d9041795119bb4895c22ad8e8"
+      "bytes": 15166,
+      "sha256": "6c0cdc00a9e0443befb42dcc9dedd52ae83a4693117500bfc3bedf330c971bbd"
     },
     {
       "file": "tests/test-wallpaper-startup.ps1",
@@ -109,8 +119,8 @@
     },
     {
       "file": "wallpaper.mjs",
-      "bytes": 10659,
-      "sha256": "c7387eab46059a020caa88962534f1047158519d972bbd6c68cda8f0702ef9b6"
+      "bytes": 10953,
+      "sha256": "373253502d2691d0342f35feb0a83141673cb65120872e4ee24086930a0da326"
     },
     {
       "file": "wallpapers/.gitkeep",
@@ -119,8 +129,8 @@
     },
     {
       "file": "wallpaper美化包安装须知.txt",
-      "bytes": 15850,
-      "sha256": "a98ad77d508bad751330a3a5e72debc6b26c14794ffaeec0e622c7f2264fa8f2"
+      "bytes": 16664,
+      "sha256": "7d040c64cbe5101524e1a07355f4b1e4c5e21e7d11aa37d20a60e66e6af7ad35"
     },
     {
       "file": "watcher-start.ps1",
@@ -129,8 +139,8 @@
     },
     {
       "file": "windows-process.ps1",
-      "bytes": 8074,
-      "sha256": "1cbe0ed6a0af84913491349819082c895307e9af971ce22352bcfe80bf3415a2"
+      "bytes": 8779,
+      "sha256": "76e9d484b48ef507c92ab21ef9a90a9117f3e750bde0def78d52c47ff4220594"
     },
     {
       "file": "启动壁纸.cmd",

@@ -59,8 +59,11 @@ Node.js 22+；Windows PowerShell 5.1 或 PowerShell 7。
 node --check renderer.js
 node --check wallpaper.mjs
 node wallpaper.mjs --validate
+node tests/test-appearance-compatibility.mjs
+node tests/test-watch-stop.mjs
 .\tests\test-wallpaper-startup.ps1
 .\tests\test-wallpaper-connection.ps1
+.\tests\test-startup-child-race.ps1
 ```
 
 ## 许可

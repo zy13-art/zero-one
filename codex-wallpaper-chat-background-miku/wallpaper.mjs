@@ -10,7 +10,7 @@ const base = `http://127.0.0.1:${port}`;
 const key = '__codexChatWallpaper';
 const execFileAsync = promisify(execFile);
 const verifiedTargets = new Set();
-const darkPreferenceTargets = new Set();
+const appearanceWarningTargets = new Set();
 const mode = process.argv[2] || '--watch';
 const validModes = new Set(['--watch', '--once', '--status', '--pause', '--resume', '--remove', '--validate']);
 if (!validModes.has(mode)) throw new Error(`Unknown mode: ${mode}`);
@@ -126,7 +126,7 @@ async function readPlaylist() {
 }
 
 async function setDarkAppearance(session) {
-  if(darkPreferenceTargets.has(session.targetId) && await session.eval("document.documentElement.classList.contains('electron-dark')||document.documentElement.dataset.theme==='dark'")) return;
+  if(await session.eval("document.documentElement.classList.contains('electron-dark')||document.documentElement.dataset.theme==='dark'")) return;
   const success = await session.eval(`(async () => {
     const bridge=window.electronBridge;
     if(!bridge?.sendMessageFromView) throw new Error('Codex setting bridge is not ready');
@@ -138,7 +138,7 @@ async function setDarkAppearance(session) {
         if(reply?.type!=='fetch-response'||reply.requestId!==requestId)return;
         cleanup();
         if(reply.responseType==='success'&&reply.status===200)resolve(true);
-        else reject(new Error('Codex could not save dark appearance'));
+        else reject(new Error(reply.error || 'Codex could not save dark appearance'));
       };
       const timer=setTimeout(()=>{cleanup();reject(new Error('Dark appearance setting timed out'));},8000);
       window.addEventListener('message',handler);
@@ -148,11 +148,20 @@ async function setDarkAppearance(session) {
     });
   })()`);
   if(!success) throw new Error('Dark appearance was not applied');
-  darkPreferenceTargets.add(session.targetId);
 }
 
 async function apply(session, playlist, renderer) {
-  if(playlist.settings.appearance==='dark') await setDarkAppearance(session);
+  if(playlist.settings.appearance==='dark') {
+    try {
+      await setDarkAppearance(session);
+      appearanceWarningTargets.delete(session.targetId);
+    } catch(error) {
+      if(!appearanceWarningTargets.has(session.targetId)) {
+        console.warn(`${new Date().toISOString()} Native dark appearance could not be saved; wallpaper will still load: ${error.message}`);
+        appearanceWarningTargets.add(session.targetId);
+      }
+    }
+  }
   const current = await session.eval(`window.${key}?.status?.() ?? null`);
   if (current?.installed && current.version === 6 && current.count === playlist.files.length) {
     return current;

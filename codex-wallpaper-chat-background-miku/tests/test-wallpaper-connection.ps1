@@ -19,6 +19,7 @@ foreach ($file in Get-ChildItem -LiteralPath $scriptsRoot -Filter '*.ps1') {
 $self=Get-WallpaperProcessIdentity -ProcessId $PID
 Assert-True ($self -and $self.Id -eq $PID -and $self.StartedTicks -gt 0 -and $self.Executable) 'Limited-information API reads this exact process identity'
 Assert-True ([bool]$self.Arguments) 'Original process arguments can be read without CIM'
+Assert-True ($self.ParentId -gt 0) 'Read-only native process information identifies the parent process'
 Assert-True ($self.SessionId -eq [Diagnostics.Process]::GetCurrentProcess().SessionId) 'Process records identify the current Windows session'
 foreach ($arguments in @(
   ,@('program.exe','simple','codex://threads/abc?view=review')

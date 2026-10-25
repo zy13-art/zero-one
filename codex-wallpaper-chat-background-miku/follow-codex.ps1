@@ -19,6 +19,7 @@ function Test-CodexRelayBatch {
   foreach ($record in @($Records)) {
     $age = ($Now.ToUniversalTime() - $record.Started.ToUniversalTime()).TotalSeconds
     if ($record.Executable -ine $Candidate.Executable -or $age -lt 0 -or $age -gt 10 -or $record.StartedTicks -lt $Candidate.StartedTicks) { return $false }
+    if ($record.Id -ne $Candidate.Id -and (-not $record.Arguments -or -not @($record.Arguments | Where-Object { $_ -match '^--type(?:=|$)' }).Count)) { return $false }
   }
   return $true
 }
@@ -60,6 +61,32 @@ function Test-FollowCodexCdp {
   } catch { return $false }
 }
 
+function Get-CodexVerifiedRelayRemainder {
+  param($Candidate, [object[]]$Captured, [object[]]$Records, [datetime]$Now = [datetime]::UtcNow)
+  $known = @{}; foreach ($item in @($Captured)) { $known[[int]$item.Id] = $item }
+  $pending = @($Records)
+  while ($pending.Count) {
+    $next = @(); $accepted = 0
+    foreach ($record in $pending) {
+      $age = ($Now.ToUniversalTime() - $record.Started.ToUniversalTime()).TotalSeconds
+      if ($record.Executable -ine $Candidate.Executable -or $age -lt 0 -or $age -gt 10 -or $record.StartedTicks -lt $Candidate.StartedTicks) { throw 'Codex launch is no longer a fresh verified batch.' }
+      if ($known.ContainsKey([int]$record.Id)) {
+        if (-not (Test-CodexSameIdentity $known[[int]$record.Id] $record)) { throw 'Codex process identity changed during startup relay.' }
+        $accepted++; continue
+      }
+      if (-not $record.Arguments -or -not @($record.Arguments | Where-Object { $_ -match '^--type(?:=|$)' }).Count) { throw 'An additional Codex main process appeared; preserving it.' }
+      if (-not $record.ParentId -or -not $known.ContainsKey([int]$record.ParentId)) { $next += $record; continue }
+      $parent = $known[[int]$record.ParentId]
+      $actualParent = Get-WallpaperProcessIdentity -ProcessId $record.ParentId
+      if (($actualParent -and -not (Test-CodexSameIdentity $parent $actualParent)) -or $record.StartedTicks -lt $parent.StartedTicks) { throw 'Codex child parent identity changed during startup relay.' }
+      $known[[int]$record.Id] = $record; $accepted++
+    }
+    if ($next.Count -and -not $accepted) { throw 'Unexpected Codex process appeared outside the captured startup process tree.' }
+    $pending = $next
+  }
+  @($Records)
+}
+
 function Invoke-CodexStartupRelay {
   param($Candidate, [string]$Profile)
   $current = @(Get-OfficialCodexProcessRecords)
@@ -75,19 +102,26 @@ function Invoke-CodexStartupRelay {
     }
   }
   Start-Sleep -Milliseconds 500
-  $remaining = @(Get-OfficialCodexProcessRecords)
-  if ($remaining.Count -and -not (Test-CodexRelayBatch -Candidate $Candidate -Records $remaining)) {
-    # The main window may already have exited. Only the original captured
-    # identities can be terminated; newly reused PIDs or older sessions stay.
-    foreach ($item in $remaining) {
-      if (-not @($current | Where-Object { Test-CodexSameIdentity $_ $item }).Count) { throw 'Codex process identities changed during startup relay.' }
+  for ($round = 0; $round -lt 3; $round++) {
+    $remaining = @(Get-CodexVerifiedRelayRemainder -Candidate $Candidate -Captured $current -Records @(Get-OfficialCodexProcessRecords))
+    if (-not $remaining.Count) { break }
+    foreach ($record in $remaining) {
+      if (-not @($current | Where-Object { Test-CodexSameIdentity $_ $record }).Count) { $current += $record }
     }
-  }
-  foreach ($record in $remaining) {
-    if (-not @($current | Where-Object { Test-CodexSameIdentity $_ $record }).Count) { throw 'Unexpected Codex process appeared during startup relay.' }
-    if (([datetime]::UtcNow - $record.Started.ToUniversalTime()).TotalSeconds -gt 10) { throw 'Codex launch is no longer fresh; leaving remaining processes alone.' }
-    $again = Get-WallpaperProcessIdentity -ProcessId $record.Id
-    if (Test-CodexSameIdentity $record $again) { Stop-Process -Id $record.Id -ErrorAction Stop }
+    # Stop the captured main first so it cannot respawn a renderer while its
+    # children are being stopped. New children need a verified captured parent.
+    foreach ($record in @($remaining | Sort-Object { if ($_.Id -eq $Candidate.Id) { 0 } else { 1 } })) {
+      $again = Get-WallpaperProcessIdentity -ProcessId $record.Id
+      if ($again -and -not (Test-CodexSameIdentity $record $again)) { throw 'Codex process identity changed before termination.' }
+      if ($again) {
+        try { Stop-Process -Id $record.Id -ErrorAction Stop }
+        catch {
+          # A child can exit naturally between the identity read and Stop-Process.
+          # Keep permission/identity errors if any process still occupies its PID.
+          if (Get-WallpaperProcessIdentity -ProcessId $record.Id) { throw }
+        }
+      }
+    }
   }
   if (@(Get-OfficialCodexProcessRecords).Count) { throw 'Codex is still running; startup relay was cancelled.' }
   New-Item -ItemType Directory -Path $Profile -Force | Out-Null
